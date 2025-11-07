@@ -229,10 +229,11 @@ io.on('connection', async (socket) => {
       const lp = listProducts(catId);
       if (lp.type === 'products') {
         return send([
-          msgText('Escolha um produto:', lp.options),
+          msgText('Escolha um produto:'), // 1. Texto
+          lp                             // 2. O objeto com os produtos
         ]);
       } else {
-        return send(lp);
+        return send(lp); // Isso já está certo (envia "Não há produtos")
       }
     }
 

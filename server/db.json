@@ -21,6 +21,15 @@
       "categoryId": "VrgcootN",
       "imageUrl": "/uploads/1759193677555_kUInm4.webp",
       "active": true
+    },
+    {
+      "id": "_otIbSdc7-",
+      "name": "xis calabresa",
+      "description": "",
+      "price": 23,
+      "categoryId": "VrgcootN",
+      "imageUrl": "/uploads/1762488384351_OcSxWI.jpeg",
+      "active": true
     }
   ],
   "orders": []
