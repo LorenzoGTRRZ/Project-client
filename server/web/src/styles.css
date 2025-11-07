@@ -26,9 +26,12 @@ body { margin:0; font-family:system-ui, Arial; background:#fafafa; color:#222; }
 
 /* ... (fim do arquivo) ... */
 
+/* ... (todo o seu CSS anterior) ... */
+
+/* ADICIONE ISTO NO FINAL DO ARQUIVO */
 .products-list {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Duas colunas */
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin: 10px 0;
 }
@@ -47,8 +50,8 @@ body { margin:0; font-family:system-ui, Arial; background:#fafafa; color:#222; }
   margin-bottom: 4px;
 }
 .product-card strong {
-  display: block; /* Nome em uma linha */
+  display: block;
 }
 .product-card span {
-  color: #333; /* Preço */
+  color: #333;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
-import { API_URL } from '../api'; // 1. PRECISAMOS DISSO PARA A URL DAS IMAGENS
+import { API_URL } from '../api'; // Importante
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(true);
@@ -56,7 +56,7 @@ export default function ChatWidget() {
               <div key={i} className={`msg ${m.type === 'you' ? 'you' : 'bot'}`}>
                 {m.text && <p>{m.text}</p>}
 
-                {/* 2. ESTE É O BLOCO NOVO QUE MOSTRA OS PRODUTOS */}
+                {/* Bloco NOVO que renderiza os produtos */}
                 {m.type === 'products' && m.products?.length > 0 && (
                   <div className="products-list">
                     {m.products.map(p => (
@@ -84,7 +84,7 @@ export default function ChatWidget() {
             <input
               value={input}
               placeholder="Digite aqui..."
-              onChange={e => setInput(e.target.value)}
+              onChange={e => setInput(e.input)}
               onKeyDown={e => e.key === 'Enter' && sendText()}
             />
             <button onClick={sendText}>Enviar</button>

@@ -228,9 +228,10 @@ io.on('connection', async (socket) => {
       state.step = 'choose_product';
       const lp = listProducts(catId);
       if (lp.type === 'products') {
+        // CORREÇÃO: Envia o texto e o objeto de produtos em msgs separadas
         return send([
-          msgText('Escolha um produto:'), // 1. Texto
-          lp                             // 2. O objeto com os produtos
+          msgText('Escolha um produto:'),
+          lp
         ]);
       } else {
         return send(lp); // Isso já está certo (envia "Não há produtos")
