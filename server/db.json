@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "email": "admin@local",
+      "passwordHash": "$2a$10$EI8idHuZSIxbsqtHxjLlHORfaHyOzphOH5hkP8mK4OuaUPZSm3QmK"
+    }
+  ],
+  "categories": [
+    {
+      "id": "VrgcootN",
+      "name": "Xis"
+    }
+  ],
+  "products": [
+    {
+      "id": "iGj7vxmsLN",
+      "name": "xis calota",
+      "description": "xis nmuito bom",
+      "price": 80,
+      "categoryId": "VrgcootN",
+      "imageUrl": "/uploads/1759193677555_kUInm4.webp",
+      "active": true
+    }
+  ],
+  "orders": []
+}
