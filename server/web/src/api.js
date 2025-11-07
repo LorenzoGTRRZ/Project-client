@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-export const API_URL = import.meta.env.VITE_API_URL || 'http://192.168.0.101:4000';
+// 1. A API_URL agora é relativa.
+// Em produção (Vercel), ela vai chamar /products, /categories, etc.
+// O vercel.json vai redirecionar isso para o backend.
+export const API_URL = import.meta.env.VITE_API_URL || '';
 
 export const api = axios.create({
   baseURL: API_URL

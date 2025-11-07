@@ -86,7 +86,7 @@ export default function AdminProducts() {
         <div className="grid">
           {products.map(p => (
             <div className="card" key={p.id}>
-              {p.imageUrl && <img src={`${API_URL}${p.imageUrl}`} alt="" />}
+              {p.imageUrl && <img src={p.imageUrl} alt="" />}
               <h4>{p.name}</h4>
               <p>R$ {p.price?.toFixed ? p.price.toFixed(2) : p.price}</p>
               <p>{p.description}</p>
