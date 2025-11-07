@@ -12,7 +12,7 @@ const { db, initDB } = require('./db');
 
 const JWT_SECRET = 'troque-este-segredo';
 const PORT = process.env.PORT || 4000;
-const FRONT_ORIGIN = process.env.FRONT_ORIGIN || 'http://localhost:5173';
+const FRONT_ORIGIN = process.env.FRONT_ORIGIN || ['https://project-client-ashen.vercel.app'];
 
 const app = express();
 const server = http.createServer(app);

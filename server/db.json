@@ -10,6 +10,10 @@
     {
       "id": "VrgcootN",
       "name": "Xis"
+    },
+    {
+      "id": "8qZe6HRv",
+      "name": "capacete "
     }
   ],
   "products": [
@@ -23,14 +27,39 @@
       "active": true
     },
     {
-      "id": "_otIbSdc7-",
-      "name": "xis calabresa",
-      "description": "",
-      "price": 23,
-      "categoryId": "VrgcootN",
-      "imageUrl": "/uploads/1762488384351_OcSxWI.jpeg",
+      "id": "JpeO_Gr_ER",
+      "name": "capacete vermelho ",
+      "description": "Capacete de motocicleta unissex com lente dupla, seção transversal, segurança, modular, flip, ao ar livre, equitação, proteção",
+      "price": 400,
+      "categoryId": "8qZe6HRv",
+      "imageUrl": "/uploads/1762490683953_JFB6GQ.png",
       "active": true
     }
   ],
-  "orders": []
+  "orders": [
+    {
+      "id": "NO5UQtKXtD",
+      "items": [
+        {
+          "productId": "_otIbSdc7-",
+          "name": "xis calabresa",
+          "price": 23,
+          "qty": 1
+        },
+        {
+          "productId": "iGj7vxmsLN",
+          "name": "xis calota",
+          "price": 80,
+          "qty": 1
+        }
+      ],
+      "total": 103,
+      "customer": {
+        "name": "Lortenzo",
+        "address": "afonso escobar"
+      },
+      "status": "received",
+      "createdAt": "2025-11-07T04:42:47.096Z"
+    }
+  ]
 }
