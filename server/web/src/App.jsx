@@ -66,7 +66,7 @@ export default function App() {
           {filteredProducts.map(product => (
             <div className="product-card-store" key={product.id}>
               {product.imageUrl && (
-                <img src={`${API_URL}${product.imageUrl}`} alt={product.name} />
+                <img src={product.imageUrl} alt={product.name} />
               )}
               <h3>{product.name}</h3>
               <p>{product.description}</p>

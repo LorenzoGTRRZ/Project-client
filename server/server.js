@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { nanoid } = require('nanoid');
 const { db, initDB } = require('./db');
+const { put } = require('@vercel/blob');
 
 const JWT_SECRET = 'troque-este-segredo';
 const PORT = process.env.PORT || 4000;
@@ -22,20 +23,14 @@ app.use(cors({ origin: FRONT_ORIGIN, credentials: true }));
 app.use(express.json());
 
 // Pasta de uploads
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
+//const uploadDir = path.join(__dirname, 'uploads');
+//if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
 // Servir imagens
-app.use('/uploads', express.static(uploadDir));
+//app.use('/uploads', express.static(uploadDir));
 
 // Multer (upload de imagens)
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname || '');
-    cb(null, `${Date.now()}_${nanoid(6)}${ext}`);
-  }
-});
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // Middleware auth admin
@@ -103,10 +98,19 @@ app.get('/products', async (req, res) => {
   res.json(prods);
 });
 
-app.post('/products', auth, upload.single('image'), async (req, res) => {
-  await db.read();
+app.post('/products', auth, upload.single('image'), async (req, res) => { // ADICIONE ASYNC
+  // ... (db.read() ...)
   const { name, description, price, categoryId, active } = req.body;
-  const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
+  let imageUrl = null;
+  if (req.file) {
+    // Faz o upload para o Vercel Blob
+    const { url } = await put(req.file.originalname, req.file.buffer, {
+      access: 'public',
+    });
+    imageUrl = url; // Salva a URL completa do blob
+  }
+
   const prod = {
     id: nanoid(10),
     name,
@@ -127,7 +131,13 @@ app.put('/products/:id', auth, upload.single('image'), async (req, res) => {
   if (!p) return res.status(404).json({ error: 'Not found' });
 
   const { name, description, price, categoryId, active } = req.body;
-  if (req.file) p.imageUrl = `/uploads/${req.file.filename}`;
+  if (req.file) {
+  // Faz o upload para o Vercel Blob
+  const { url } = await put(req.file.originalname, req.file.buffer, {
+    access: 'public',
+  });
+  p.imageUrl = url; // Salva a URL completa
+}
   if (name) p.name = name;
   if (description) p.description = description;
   if (price != null) p.price = Number(price);
