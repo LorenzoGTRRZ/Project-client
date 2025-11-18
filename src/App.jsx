@@ -71,7 +71,7 @@ export default function App() {
               <h3>{product.name}</h3>
               <p>{product.description}</p>
               <div className="product-card-footer">
-                <span className="price">R$ {product.price.toFixed(2)}</span>
+                <span className="price">R$ {product.price?.toFixed(2)}</span>
                 <button onClick={() => addToCart(product)}>Adicionar</button>
               </div>
             </div>
