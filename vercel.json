@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server/web/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    },
+    {
+      "src": "server/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    { "src": "/auth/(.*)", "dest": "/server/server.js" },
+    { "src": "/categories/(.*)", "dest": "/server/server.js" },
+    { "src": "/products/(.*)", "dest": "/server/server.js" },
+    { "src": "/orders/(.*)", "dest": "/server/server.js" },
+
+    {
+      "src": "/assets/(.*)",
+      "dest": "/server/web/dist/assets/$1"
+    },
+    {
+      "src": "/vite.svg",
+      "dest": "/server/web/dist/vite.svg"
+    },
+    
+    {
+      "src": "/(.*)",
+      "dest": "/server/web/dist/index.html"
+    }
+  ]
+}
