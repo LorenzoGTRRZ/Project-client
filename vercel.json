@@ -16,9 +16,19 @@
     { "src": "/categories/(.*)", "dest": "/server/server.js" },
     { "src": "/products/(.*)", "dest": "/server/server.js" },
     { "src": "/orders/(.*)", "dest": "/server/server.js" },
+
+    {
+      "src": "/assets/(.*)",
+      "dest": "/server/web/dist/assets/$1"
+    },
+    {
+      "src": "/vite.svg",
+      "dest": "/server/web/dist/vite.svg"
+    },
+    
     {
       "src": "/(.*)",
-      "dest": "/server/web/dist/$1"
+      "dest": "/server/web/dist/index.html"
     }
   ]
 }
