@@ -95,7 +95,7 @@ apiRouter.post('/products', auth, upload.single('image'), async (req, res) => {
   let imageUrl = null;
   if (req.file) {
     // Salva no Vercel Blob
-    const { url } = await put(req.file.originalname, req.file.buffer, { access: 'public' });
+    const { url } = await put(req.file.originalname, req.file.buffer, { access: 'public', addRandomSuffix: true });
     imageUrl = url;
   }
   const prod = {
