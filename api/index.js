@@ -4,20 +4,18 @@ const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { nanoid } = require('nanoid');
-const { db, initDB } = require('./db');
-const { put } = require('@vercel/blob');
+const { db, initDB } = require('./db'); // <-- Usa o novo db.js
+const { put } = require('@vercel/blob'); // <-- Usa o Vercel Blob
 
 const JWT_SECRET = 'troque-este-segredo';
 const PORT = process.env.PORT || 4000;
 const app = express();
 
-// Middlewares
-app.use(cors()); // Permite todas as origens
+app.use(cors());
 app.use(express.json());
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Roteador da API
 const apiRouter = express.Router();
 
 // Middleware de autenticação
@@ -32,7 +30,7 @@ function auth(req, res, next) {
   }
 }
 
-// --- Rotas da API ---
+// --- Rotas da API (idênticas às que você já tem) ---
 
 // Auth
 apiRouter.post('/auth/login', async (req, res) => {
@@ -61,17 +59,34 @@ apiRouter.post('/categories', auth, async (req, res) => {
   res.json(cat);
 });
 
-// ... (as outras rotas PUT e DELETE de /categories estão corretas no seu arquivo) ...
+apiRouter.put('/categories/:id', auth, async (req, res) => {
+  await db.read();
+  const cat = db.data.categories.find(c => c.id === req.params.id);
+  if (!cat) return res.status(404).json({ error: 'Not found' });
+  cat.name = req.body.name ?? cat.name;
+  await db.write();
+  res.json(cat);
+});
+
+apiRouter.delete('/categories/:id', auth, async (req, res) => {
+  await db.read();
+  db.data.categories = db.data.categories.filter(c => c.id !== req.params.id);
+  await db.write();
+  res.json({ ok: true });
+});
 
 // Produtos
 apiRouter.get('/products', async (req, res) => {
   await db.read();
-  res.json(db.data.products.filter(p => p.active)); // Mostra só ativos na loja
+  // Mostra apenas produtos ativos na loja
+  const prods = db.data.products.filter(p => p.active === true);
+  res.json(prods);
 });
 
+// Rota de admin para ver TODOS os produtos
 apiRouter.get('/products/all', auth, async (req, res) => {
   await db.read();
-  res.json(db.data.products); // Rota de admin para ver TODOS
+  res.json(db.data.products);
 });
 
 apiRouter.post('/products', auth, upload.single('image'), async (req, res) => {
@@ -79,6 +94,7 @@ apiRouter.post('/products', auth, upload.single('image'), async (req, res) => {
   const { name, description, price, categoryId, active } = req.body;
   let imageUrl = null;
   if (req.file) {
+    // Salva no Vercel Blob
     const { url } = await put(req.file.originalname, req.file.buffer, { access: 'public' });
     imageUrl = url;
   }
@@ -94,7 +110,31 @@ apiRouter.post('/products', auth, upload.single('image'), async (req, res) => {
   res.json(prod);
 });
 
-// ... (as outras rotas PUT e DELETE de /products estão corretas no seu arquivo) ...
+apiRouter.put('/products/:id', auth, upload.single('image'), async (req, res) => {
+  await db.read();
+  const p = db.data.products.find(x => x.id === req.params.id);
+  if (!p) return res.status(404).json({ error: 'Not found' });
+  const { name, description, price, categoryId, active } = req.body;
+  if (req.file) {
+    // Salva no Vercel Blob
+    const { url } = await put(req.file.originalname, req.file.buffer, { access: 'public' });
+    p.imageUrl = url;
+  }
+  if (name) p.name = name;
+  if (description) p.description = description;
+  if (price != null) p.price = Number(price);
+  if (categoryId !== undefined) p.categoryId = categoryId || null;
+  if (active !== undefined) p.active = active === 'true' || active === true;
+  await db.write();
+  res.json(p);
+});
+
+apiRouter.delete('/products/:id', auth, async (req, res) => {
+  await db.read();
+  db.data.products = db.data.products.filter(p => p.id !== req.params.id);
+  await db.write();
+  res.json({ ok: true });
+});
 
 // Pedidos
 apiRouter.get('/orders', auth, async (req, res) => {
@@ -107,7 +147,8 @@ apiRouter.post('/orders', async (req, res) => {
   const { items, customer } = req.body;
   const total = items.reduce((s, it) => s + it.price * it.qty, 0);
   const order = {
-    id: nanoid(10), items, total,
+    id: nanoid(10),
+    items, total,
     customer: customer || {},
     status: 'received',
     createdAt: new Date().toISOString()
@@ -120,17 +161,18 @@ apiRouter.post('/orders', async (req, res) => {
 // --- Fim das Rotas ---
 
 // Diz ao Express para usar o roteador
-// A Vercel vai chamar /api/products
-// O seu dev local (com o proxy) vai chamar /products
-app.use('/api', apiRouter);
-app.use('/', apiRouter); 
+app.use('/api', apiRouter); // Para a Vercel (ex: /api/products)
+app.use('/', apiRouter);    // Para o 'dev' local (ex: /products)
 
-// Inicia o servidor local (A Vercel ignora isto)
-if (!process.env.VERCEL_ENV) {
-  initDB().then(() => {
+// **A MUDANÇA IMPORTANTE:**
+// Chama o initDB() (que chama o db.read()) ANTES de qualquer coisa.
+// Isso garante que o admin user seja criado no Vercel KV na primeira inicialização.
+initDB().then(() => {
+  // Se NÃO estiver na Vercel, inicia o servidor local
+  if (!process.env.VERCEL_ENV) {
     app.listen(PORT, () => console.log(`API local rodando em http://localhost:${PORT}`));
-  });
-}
+  }
+});
 
-// Exporta o app para a Vercel
+// Exporta a app para a Vercel
 module.exports = app;
